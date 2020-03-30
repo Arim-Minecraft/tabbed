@@ -3,6 +3,7 @@ package com.keenant.tabbed.tablist;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ import com.keenant.tabbed.item.TabItem;
  * An implementation of SimpleTabList that behaves like vanilla Minecraft.
  */
 public final class DefaultTabList extends SimpleTabList {
-    private Map<Player,String> names = new HashMap<>();
+    private final Map<UUID,String> names = new HashMap<>();
 
     private int taskId;
     
@@ -32,28 +33,24 @@ public final class DefaultTabList extends SimpleTabList {
         listener = new DefaultTabListListener(this);
         this.tabbed.getPlugin().getServer().getPluginManager().registerEvents(listener, this.tabbed.getPlugin());
 
-        for (Player target : Bukkit.getOnlinePlayers())
-            addPlayer(target);
+        Bukkit.getOnlinePlayers().forEach(this::addPlayer);
 
         // Because there is no PlayerListNameUpdateEvent in Bukkit
-        this.taskId = this.tabbed.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(this.tabbed.getPlugin(), new Runnable() {
-            @Override
-            public void run() {
-                for (Player target : Bukkit.getOnlinePlayers()) {
-                    if (!names.containsKey(target))
-                        continue;
+        this.taskId = this.tabbed.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(this.tabbed.getPlugin(), () -> {
+			for (Player target : Bukkit.getOnlinePlayers()) {
+				if (!names.containsKey(target.getUniqueId()))
+					continue;
 
-                    String prevName = names.get(target);
-                    String currName = target.getPlayerListName();
+				String prevName = names.get(target.getUniqueId());
+				String currName = target.getPlayerListName();
 
-                    if (prevName.equals(currName))
-                        continue;
+				if (prevName.equals(currName))
+					continue;
 
-                    int index = getTabItemIndex(target);
-                    update(index);
-                    names.put(target, currName);
-                }
-            }
+				int index = getTabItemIndex(target);
+				update(index);
+				names.put(target.getUniqueId(), currName);
+			}
         }, 0, 5);
     }
 
@@ -66,7 +63,7 @@ public final class DefaultTabList extends SimpleTabList {
 
     void addPlayer(Player player) {
         add(getInsertLocation(player), new PlayerTabItem(player));
-        this.names.put(player, player.getPlayerListName());
+        this.names.put(player.getUniqueId(), player.getPlayerListName());
     }
 
     int getTabItemIndex(Player player) {
