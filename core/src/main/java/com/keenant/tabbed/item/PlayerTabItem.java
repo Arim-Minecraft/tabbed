@@ -1,14 +1,16 @@
 package com.keenant.tabbed.item;
 
-import com.keenant.tabbed.util.Reflection;
 import com.keenant.tabbed.util.Skin;
 import com.keenant.tabbed.util.Skins;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 import org.bukkit.entity.Player;
+
+import space.arim.api.platform.spigot.nms.NMS;
 
 /**
  * A tab item that represents a player.
@@ -79,7 +81,12 @@ public class PlayerTabItem implements TabItem {
     }
 
     private int getNewPing() {
-        return Reflection.getPing(this.player);
+    	try {
+			return NMS.getPing(this.player);
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException ex) {
+			ex.printStackTrace();
+			return 0;
+		}
     }
 
     /**
