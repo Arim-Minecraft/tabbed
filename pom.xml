@@ -17,9 +17,9 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
     	<maven.compiler.target>1.8</maven.compiler.target>
     	<core.version>1.8.0</core.version>
-    	<lombok.version>1.16.6</lombok.version>
-    	<spigot.version>1.12.2-R0.1-SNAPSHOT</spigot.version>
-    	<protocollib.version>4.3.0</protocollib.version>
+    	<lombok.version>1.18.12</lombok.version>
+    	<spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
+    	<protocollib.version>4.4.0</protocollib.version>
     	
     	<plugin.name>${project.name}</plugin.name>
 		<plugin.version>${core.version}</plugin.version>
@@ -89,10 +89,6 @@
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
-			<id>dmulloy2-repo</id>
-			<url>http://repo.dmulloy2.net/nexus/repository/public/</url>
 		</repository>
 	</repositories>
 </project>

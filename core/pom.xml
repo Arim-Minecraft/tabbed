@@ -33,4 +33,11 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>dmulloy2-repo</id>
+			<url>http://repo.dmulloy2.net/nexus/repository/public/</url>
+		</repository>
+	</repositories>
 </project>
