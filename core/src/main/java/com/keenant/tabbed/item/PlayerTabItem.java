@@ -5,6 +5,9 @@ import com.keenant.tabbed.util.Skin;
 import com.keenant.tabbed.util.Skins;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.util.function.Function;
+
 import org.bukkit.entity.Player;
 
 /**
@@ -18,14 +21,17 @@ public class PlayerTabItem implements TabItem {
     @Getter private String text;
     @Getter private int ping;
     @Getter private Skin skin;
+    
+    private static final PlayerProvider<String> LIST_NAME_PROVIDER = Player::getPlayerListName;
+    private static final PlayerProvider<Skin> SKIN_PROVIDER = Skins::getPlayer;
 
     public PlayerTabItem(Player player, PlayerProvider<String> textProvider, PlayerProvider<Skin> skinProvider) {
         this.player = player;
         this.textProvider = textProvider;
         this.skinProvider = skinProvider;
-        this.text = textProvider.get(player);
+        this.text = textProvider.apply(player);
         this.ping = getNewPing();
-        this.skin = skinProvider.get(player);
+        this.skin = skinProvider.apply(player);
         updateText();
         updatePing();
         updateSkin();
@@ -44,7 +50,7 @@ public class PlayerTabItem implements TabItem {
         if (!this.player.isOnline() || !this.player.isValid())
             return false;
 
-        String newText = this.textProvider.get(this.player);
+        String newText = this.textProvider.apply(this.player);
         boolean update = this.text == null || !newText.equals(this.text);
         this.text = newText;
         return update;
@@ -66,37 +72,32 @@ public class PlayerTabItem implements TabItem {
         if (!this.player.isOnline() || !this.player.isValid())
             return false;
 
-        Skin newSkin = this.skinProvider.get(this.player);
+        Skin newSkin = this.skinProvider.apply(this.player);
         boolean update = this.skin == null || !newSkin.equals(this.skin);
         this.skin = newSkin;
         return update;
     }
 
     private int getNewPing() {
-        try {
-            Object craftPlayer = Reflection.getHandle(this.player);
-            return craftPlayer.getClass().getDeclaredField("ping").getInt(craftPlayer);
-        } catch (Exception e) {
-            throw new RuntimeException("couldn't get player ping", e);
-        }
+        return Reflection.getPing(this.player);
     }
 
-    private static PlayerProvider<String> LIST_NAME_PROVIDER = new PlayerProvider<String>() {
-        @Override
-        public String get(Player player) {
-            return player.getPlayerListName();
-        }
-    };
+    /**
+     * A provider of player specific placeholders.
+     * 
+     * @author A248
+     *
+     * @param <T>
+     */
+    public interface PlayerProvider<T> extends Function<Player, T> {
 
-    private static PlayerProvider<Skin> SKIN_PROVIDER = new PlayerProvider<Skin>() {
+    	/**
+    	 * Gets the relevant information about this player
+    	 * 
+    	 */
         @Override
-        public Skin get(Player player) {
-            return Skins.getPlayer(player);
-        }
-    };
+		T apply(Player player);
 
-    public interface PlayerProvider<T> {
-        T get(Player player);
     }
 
     @Override

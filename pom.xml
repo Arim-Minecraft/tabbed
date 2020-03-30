@@ -18,8 +18,9 @@
     	<maven.compiler.target>1.8</maven.compiler.target>
     	<core.version>1.8.0</core.version>
     	<lombok.version>1.18.12</lombok.version>
+    	<arimapi.version>0.7.2-SNAPSHOT</arimapi.version>
+		<protocollib.version>4.4.0</protocollib.version>
     	<spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
-    	<protocollib.version>4.4.0</protocollib.version>
     	
     	<plugin.name>${project.name}</plugin.name>
 		<plugin.version>${core.version}</plugin.version>
@@ -67,15 +68,20 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-				<groupId>org.spigotmc</groupId>
-				<artifactId>spigot-api</artifactId>
-				<version>${spigot.version}</version>
-				<scope>provided</scope>
+				<groupId>space.arim</groupId>
+				<artifactId>arimapi-core</artifactId>
+				<version>${arimapi.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.comphenix.protocol</groupId>
 				<artifactId>ProtocolLib-API</artifactId>
 				<version>${protocollib.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.spigotmc</groupId>
+				<artifactId>spigot-api</artifactId>
+				<version>${spigot.version}</version>
 				<scope>provided</scope>
 			</dependency>
 		</dependencies>
