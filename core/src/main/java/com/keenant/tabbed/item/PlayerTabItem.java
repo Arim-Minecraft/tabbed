@@ -23,9 +23,6 @@ public class PlayerTabItem implements TabItem {
     @Getter private String text;
     @Getter private int ping;
     @Getter private Skin skin;
-    
-    private static final PlayerProvider<String> LIST_NAME_PROVIDER = Player::getPlayerListName;
-    private static final PlayerProvider<Skin> SKIN_PROVIDER = Skins::getPlayer;
 
     public PlayerTabItem(Player player, PlayerProvider<String> textProvider, PlayerProvider<Skin> skinProvider) {
         this.player = player;
@@ -40,11 +37,11 @@ public class PlayerTabItem implements TabItem {
     }
 
     public PlayerTabItem(Player player, PlayerProvider<String> textProvider) {
-        this(player, textProvider, SKIN_PROVIDER);
+        this(player, textProvider, Skins::getPlayer);
     }
 
     public PlayerTabItem(Player player) {
-        this(player, LIST_NAME_PROVIDER);
+        this(player, Player::getPlayerListName);
     }
 
     @Override
