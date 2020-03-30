@@ -1,4 +1,4 @@
-package com.keenant.tabbed.util;
+package com.keenant.tabbed.tablist;
 
 import com.comphenix.protocol.PacketType.Play.Server;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -14,24 +14,25 @@ import java.util.List;
 /**
  * Some generic-ish packet utils.
  */
-public class Packets {
+class Packets {
+
     /**
      * Creates a PLAYER_INFO packet from the params.
      * @param action
      * @param data
      * @return
      */
-    public static PacketContainer getPacket(PlayerInfoAction action, PlayerInfoData data) {
+    static PacketContainer getPacket(PlayerInfoAction action, PlayerInfoData data) {
         return getPacket(action, Collections.singletonList(data));
     }
+
     /**
      * Creates a PLAYER_INFO packet from the params.
      * @param action
      * @param data
      * @return
      */
-
-    public static PacketContainer getPacket(PlayerInfoAction action, List<PlayerInfoData> data) {
+    static PacketContainer getPacket(PlayerInfoAction action, List<PlayerInfoData> data) {
         PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(Server.PLAYER_INFO);
         packet.getPlayerInfoAction().write(0, action);
         packet.getPlayerInfoDataLists().write(0, data);
@@ -44,7 +45,7 @@ public class Packets {
      * @param packets
      * @return
      */
-    public static void send(Player player, List<PacketContainer> packets) {
+    static void send(Player player, List<PacketContainer> packets) {
         try {
             for (PacketContainer packet : packets)
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet, false);
