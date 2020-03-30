@@ -1,31 +1,34 @@
 package com.keenant.tabbed;
 
-import com.google.common.base.Preconditions;
-import com.keenant.tabbed.tablist.*;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class Tabbed implements Listener {
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.keenant.tabbed.tablist.DefaultTabList;
+import com.keenant.tabbed.tablist.SimpleTabList;
+import com.keenant.tabbed.tablist.TabList;
+import com.keenant.tabbed.tablist.TableTabList;
+import com.keenant.tabbed.tablist.TitledTabList;
+
+import lombok.Getter;
+import lombok.Setter;
+
+public class Tabbed {
     private static Map<Plugin,Tabbed> instances = new HashMap<>();
     @Getter @Setter static Level logLevel = Level.WARNING;
 
     @Getter private final Plugin plugin;
-    private final Map<Player,TabList> tabLists;
+    private final ConcurrentHashMap<UUID,TabList> tabLists;
 
-    public Tabbed(Plugin plugin) {
+    private Tabbed(Plugin plugin) {
         this.plugin = plugin;
-        this.tabLists = new HashMap<>();
-        this.plugin.getServer().getPluginManager().registerEvents(this, this.plugin);
+        this.tabLists = new ConcurrentHashMap<>();
         instances.put(plugin, this);
     }
 
@@ -35,26 +38,35 @@ public class Tabbed implements Listener {
     }
 
     /**
-     * Gets an instance of Tabbed from a plugin.
-     * @param plugin
-     * @return
+     * Gets an instance of Tabbed from a plugin. <br>
+     * Creates an instance if it does not exist.
+     * 
+     * @param plugin the plugin to use
+     * @return the tabbed instance
      */
-    public static Tabbed getTabbed(Plugin plugin) {
-        return instances.get(plugin);
+    public static Tabbed get(JavaPlugin plugin) {
+        return instances.computeIfAbsent(plugin, Tabbed::new);
     }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        destroyTabList(event.getPlayer());
+    
+    /**
+     * Checks if an instance exists. This will not be necessary
+     * in most cases because {@link #get(Plugin)} will create an instance
+     * automatically if it does not.
+     * 
+     * @param plugin the plugin to use
+     * @return whether the instance exists
+     */
+    public static boolean hasInstance(Plugin plugin) {
+    	return instances.containsKey(plugin);
     }
-
+    
     /**
      * Get the current tab list of the player.
      * @param player
      * @return The tab list, or null if it wasn't present.
      */
     public TabList getTabList(Player player) {
-        return this.tabLists.get(player);
+        return this.tabLists.get(player.getUniqueId());
     }
 
     /**
@@ -63,12 +75,11 @@ public class Tabbed implements Listener {
      * @return The tab list removed (or null if it wasn't present).
      */
     public TabList destroyTabList(Player player) {
-        TabList tabList = getTabList(player);
-        if (tabList == null)
-            return null;
-        this.tabLists.remove(player);
-        tabList.disable();
-        return tabList;
+    	TabList tabList = this.tabLists.remove(player.getUniqueId());
+    	if (tabList != null) {
+    		tabList.disable();
+    	}
+    	return tabList;
     }
 
     /**
@@ -191,8 +202,10 @@ public class Tabbed implements Listener {
     }
 
     private <T extends TabList> T put(Player player, T tabList) {
-        Preconditions.checkArgument(!this.tabLists.containsKey(player), "player '" + player.getName() + "' already has a tablist");
-        this.tabLists.put(player, tabList);
+        TabList previous = this.tabLists.put(player.getUniqueId(), tabList);
+        if (previous != null) {
+        	previous.disable();
+        }
         return tabList;
     }
 }
