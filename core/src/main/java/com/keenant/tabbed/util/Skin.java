@@ -25,6 +25,14 @@ public class Skin {
     }
 
     @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((property == null) ? 0 : property.hashCode());
+		return result;
+	}
+
+    @Override
     public boolean equals(Object object) {
         if (object == this)
             return true;
