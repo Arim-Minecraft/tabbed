@@ -1,27 +1,26 @@
 package com.keenant.tabbed.tablist;
 
-import com.keenant.tabbed.item.TabItem;
-import com.keenant.tabbed.Tabbed;
-import com.keenant.tabbed.item.PlayerTabItem;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+
+import com.keenant.tabbed.Tabbed;
+import com.keenant.tabbed.item.PlayerTabItem;
+import com.keenant.tabbed.item.TabItem;
+
 /**
  * An implementation of SimpleTabList that behaves like vanilla Minecraft.
  */
-public final class DefaultTabList extends SimpleTabList implements Listener {
+public final class DefaultTabList extends SimpleTabList {
     private Map<Player,String> names = new HashMap<>();
 
     private int taskId;
+    
+    private DefaultTabListListener listener;
 
     public DefaultTabList(Tabbed tabbed, Player player, int maxItems) {
         super(tabbed, player, maxItems, -1, -1);
@@ -30,7 +29,8 @@ public final class DefaultTabList extends SimpleTabList implements Listener {
     @Override
     public void enable() {
         super.enable();
-        this.tabbed.getPlugin().getServer().getPluginManager().registerEvents(this, this.tabbed.getPlugin());
+        listener = new DefaultTabListListener(this);
+        this.tabbed.getPlugin().getServer().getPluginManager().registerEvents(listener, this.tabbed.getPlugin());
 
         for (Player target : Bukkit.getOnlinePlayers())
             addPlayer(target);
@@ -60,26 +60,16 @@ public final class DefaultTabList extends SimpleTabList implements Listener {
     @Override
     public void disable() {
         super.disable();
-        HandlerList.unregisterAll(this);
+        HandlerList.unregisterAll(listener);
         this.tabbed.getPlugin().getServer().getScheduler().cancelTask(this.taskId);
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        addPlayer(event.getPlayer());
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerQuitEvent event) {
-        remove(getTabItemIndex(event.getPlayer()));
-    }
-
-    private void addPlayer(Player player) {
+    void addPlayer(Player player) {
         add(getInsertLocation(player), new PlayerTabItem(player));
         this.names.put(player, player.getPlayerListName());
     }
 
-    private int getTabItemIndex(Player player) {
+    int getTabItemIndex(Player player) {
         for (Entry<Integer,TabItem> item : this.items.entrySet()) {
             // items will always be players in this case, cast is safe
             PlayerTabItem tabItem = (PlayerTabItem) item.getValue();
