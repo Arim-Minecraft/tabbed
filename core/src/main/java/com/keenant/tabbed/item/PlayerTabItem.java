@@ -90,11 +90,9 @@ public class PlayerTabItem implements TabItem {
     }
 
     /**
-     * A provider of player specific placeholders.
-     * 
-     * @author A248
+     * A provider of player specific information
      *
-     * @param <T>
+     * @param <T> the type of the information provided
      */
     public interface PlayerProvider<T> extends Function<Player, T> {
 
