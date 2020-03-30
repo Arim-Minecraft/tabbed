@@ -28,7 +28,7 @@ public final class DefaultTabList extends SimpleTabList implements Listener {
     }
 
     @Override
-    public DefaultTabList enable() {
+    public void enable() {
         super.enable();
         this.tabbed.getPlugin().getServer().getPluginManager().registerEvents(this, this.tabbed.getPlugin());
 
@@ -55,16 +55,13 @@ public final class DefaultTabList extends SimpleTabList implements Listener {
                 }
             }
         }, 0, 5);
-
-        return this;
     }
 
     @Override
-    public DefaultTabList disable() {
+    public void disable() {
         super.disable();
         HandlerList.unregisterAll(this);
         this.tabbed.getPlugin().getServer().getScheduler().cancelTask(this.taskId);
-        return this;
     }
 
     @EventHandler

@@ -63,18 +63,6 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
         return maxItems;
     }
 
-    @Override
-    public SimpleTabList enable() {
-        super.enable();
-        return this;
-    }
-
-    @Override
-    public SimpleTabList disable() {
-        super.disable();
-        return this;
-    }
-
     /**
      * Sends the batch update to the player and resets the batch.
      */

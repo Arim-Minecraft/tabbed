@@ -67,7 +67,8 @@ public class Tabbed implements Listener {
         if (tabList == null)
             return null;
         this.tabLists.remove(player);
-        return tabList.disable();
+        tabList.disable();
+        return tabList;
     }
 
     /**
@@ -85,7 +86,9 @@ public class Tabbed implements Listener {
      * @return
      */
     public TitledTabList newTitledTabList(Player player) {
-        return put(player, new TitledTabList(player).enable());
+    	TitledTabList tabList = new TitledTabList(player);
+    	tabList.enable();
+        return put(player, tabList);
     }
 
     /**
@@ -94,7 +97,9 @@ public class Tabbed implements Listener {
      * @return
      */
     public DefaultTabList newDefaultTabList(Player player) {
-        return put(player, new DefaultTabList(this, player, -1).enable());
+    	DefaultTabList tabList = new DefaultTabList(this, player, -1);
+    	tabList.enable();
+        return put(player, tabList);
     }
 
     /**
@@ -136,7 +141,9 @@ public class Tabbed implements Listener {
      * @return
      */
     public SimpleTabList newSimpleTabList(Player player, int maxItems, int minColumnWidth, int maxColumnWidth) {
-        return put(player, new SimpleTabList(this, player, maxItems, minColumnWidth, maxColumnWidth).enable());
+    	SimpleTabList tabList = new SimpleTabList(this, player, maxItems, minColumnWidth, maxColumnWidth);
+    	tabList.enable();
+        return put(player, tabList);
     }
 
     /**
@@ -178,7 +185,9 @@ public class Tabbed implements Listener {
      * @return
      */
     public TableTabList newTableTabList(Player player, int columns, int minColumnWidth, int maxColumnWidth) {
-        return put(player, new TableTabList(this, player, columns, minColumnWidth, maxColumnWidth).enable());
+    	TableTabList tabList = new TableTabList(this, player, columns, minColumnWidth, maxColumnWidth);
+    	tabList.enable();
+        return put(player, tabList);
     }
 
     private <T extends TabList> T put(Player player, T tabList) {

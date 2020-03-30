@@ -8,45 +8,44 @@ import com.keenant.tabbed.util.Skin;
 public interface TabItem {
     /**
      * The text of the tab item (any length, recommended less than ~18). No calculations should be made.
-     * @return
+     * 
+     * @return the text
      */
     String getText();
 
     /**
      * The ping of the tab item. No calculations should be made.
-     * @return
+     * 
+     * @return the ping
      */
     int getPing();
 
     /**
      * The skin/avatar of the tab item. No calculations should be made.
-     * @return
+     * 
+     * @return the skin
      */
     Skin getSkin();
 
     /**
      * Makes any appropriate changes to the text.
-     * @return If a change has been made.
+     * 
+     * @return true if a change has been made, false otherwise
      */
     boolean updateText();
 
     /**
      * Makes any appropriate changes to the ping.
-     * @return If a change has been made.
+     * 
+     * @return true if a change has been made, false otherwise
      */
     boolean updatePing();
 
     /**
      * Makes any appropriate changes to the skin.
-     * @return If a change has been made.
+     * 
+     * @return true if a change has been made, false otherwise
      */
     boolean updateSkin();
 
-    /**
-     * Compare to another tab item.
-     * @param object
-     * @return
-     */
-    @Override
-	boolean equals(Object object);
 }

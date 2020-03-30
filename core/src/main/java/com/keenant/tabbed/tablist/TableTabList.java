@@ -53,16 +53,14 @@ public class TableTabList extends SimpleTabList {
     }
 
     @Override
-    public TableTabList enable() {
+    public void enable() {
         super.enable();
         reset();
-        return this;
     }
 
     @Override
-    public TableTabList disable() {
+    public void disable() {
         super.disable();
-        return this;
     }
 
     /**

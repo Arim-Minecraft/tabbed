@@ -24,14 +24,14 @@ public class TitledTabList implements TabList {
     }
 
     @Override
-    public TitledTabList enable() {
-        return this;
+    public void enable() {
+
     }
 
     @Override
-    public TitledTabList disable() {
+    public void disable() {
         resetHeaderFooter();
-        return this;
+
     }
 
     public void setHeaderFooter(String header, String footer) {
