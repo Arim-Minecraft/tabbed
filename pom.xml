@@ -26,11 +26,7 @@
 		<plugin.description>${project.description</plugin.description>
 		<plugin.url>${project.url}</plugin.url>
 	</properties>
-
-	<dependencies>
-
-	</dependencies>
-
+	
 	<build>
 		<pluginManagement>
 			<plugins>
