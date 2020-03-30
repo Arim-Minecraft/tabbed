@@ -25,7 +25,7 @@ public class TextTabItem implements TabItem {
     }
 
     public TextTabItem(String text, int ping) {
-        this(text, ping, Skins.DEFAULT_SKIN);
+        this(text, ping, Skins.getDefault());
     }
 
     public TextTabItem(String text, int ping, Skin skin) {

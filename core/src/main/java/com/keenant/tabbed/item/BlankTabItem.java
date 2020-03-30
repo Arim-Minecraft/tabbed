@@ -14,6 +14,6 @@ public class BlankTabItem extends TextTabItem {
     }
 
     public BlankTabItem() {
-        this(Skins.DEFAULT_SKIN);
+        this(Skins.getDefault());
     }
 }
