@@ -23,7 +23,7 @@ import java.util.logging.Level;
 public class TableTabList extends SimpleTabList {
     @Getter private final int columns;
     @Getter private final int rows;
-    @Getter private final TableBox box;
+    private final TableBox box;
 
     public TableTabList(Tabbed tabbed, Player player, int columns, int minColumnWidth, int maxColumnWidth) {
         super(tabbed, player, -1, minColumnWidth, maxColumnWidth);
@@ -303,7 +303,8 @@ public class TableTabList extends SimpleTabList {
             return this;
         }
 
-        public TableCell clone() {
+        @Override
+		public TableCell clone() {
             return new TableCell(this.column, this.row);
         }
 
@@ -399,7 +400,8 @@ public class TableTabList extends SimpleTabList {
             return getWidth() * getHeight();
         }
 
-        public TableBox clone() {
+        @Override
+		public TableBox clone() {
             return new TableBox(this.getTopLeft().clone(), this.getBottomRight().clone());
         }
     }

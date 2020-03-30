@@ -47,5 +47,6 @@ public interface TabItem {
      * @param object
      * @return
      */
-    boolean equals(Object object);
+    @Override
+	boolean equals(Object object);
 }

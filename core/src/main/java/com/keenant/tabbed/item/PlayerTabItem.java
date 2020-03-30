@@ -81,20 +81,6 @@ public class PlayerTabItem implements TabItem {
         }
     }
 
-    private static PlayerProvider<String> NAME_PROVIDER = new PlayerProvider<String>() {
-        @Override
-        public String get(Player player) {
-            return player.getName();
-        }
-    };
-
-    private static PlayerProvider<String> DISPLAY_NAME_PROVIDER = new PlayerProvider<String>() {
-        @Override
-        public String get(Player player) {
-            return player.getDisplayName();
-        }
-    };
-
     private static PlayerProvider<String> LIST_NAME_PROVIDER = new PlayerProvider<String>() {
         @Override
         public String get(Player player) {
@@ -114,7 +100,17 @@ public class PlayerTabItem implements TabItem {
     }
 
     @Override
-    public boolean equals(Object object) {
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ping;
+		result = prime * result + ((skin == null) ? 0 : skin.hashCode());
+		result = prime * result + ((text == null) ? 0 : text.hashCode());
+		return result;
+	}
+    
+    @Override
+	public boolean equals(Object object) {
         if (!(object instanceof PlayerTabItem))
             return false;
         PlayerTabItem other = (PlayerTabItem) object;

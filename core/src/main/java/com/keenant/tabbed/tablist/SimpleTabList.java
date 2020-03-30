@@ -1,24 +1,31 @@
 package com.keenant.tabbed.tablist;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.bukkit.entity.Player;
+
+import com.google.common.base.Preconditions;
+
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode;
 import com.comphenix.protocol.wrappers.EnumWrappers.PlayerInfoAction;
 import com.comphenix.protocol.wrappers.PlayerInfoData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.google.common.base.Preconditions;
+
 import com.keenant.tabbed.Tabbed;
 import com.keenant.tabbed.item.TabItem;
 import com.keenant.tabbed.util.Packets;
 import com.keenant.tabbed.util.Skin;
-import com.keenant.tabbed.util.Skins;
+
 import lombok.Getter;
 import lombok.ToString;
-import org.bukkit.entity.Player;
-
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
 
 /**
  * A simple implementation of a custom tab list that supports batch updates.
@@ -51,7 +58,8 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
         this.items = new HashMap<>();
     }
 
-    public int getMaxItems() {
+    @Override
+	public int getMaxItems() {
         return maxItems;
     }
 
@@ -99,11 +107,13 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
             this.clientItems.putAll(this.items);
     }
 
-    public void add(TabItem item) {
+    @Override
+	public void add(TabItem item) {
         set(getNextIndex(), item);
     }
 
-    public void add(int index, TabItem item) {
+    @Override
+	public void add(int index, TabItem item) {
         validateIndex(index);
         Map<Integer,TabItem> current = new HashMap<>();
         current.putAll(this.items);
@@ -119,7 +129,8 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
         update(current, map);
     }
 
-    public TabItem set(int index, TabItem item) {
+    @Override
+	public TabItem set(int index, TabItem item) {
         Map<Integer,TabItem> items = new HashMap<>(1);
         items.put(index, item);
         return set(items).get(index);
@@ -135,14 +146,16 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
         return oldItems;
     }
 
-    public TabItem remove(int index) {
+    @Override
+	public TabItem remove(int index) {
         validateIndex(index);
         TabItem removed = this.items.remove(index);
         update(index, removed, null);
         return removed;
     }
 
-    public <T extends TabItem> T remove(T item) {
+    @Override
+	public <T extends TabItem> T remove(T item) {
         Iterator<Entry<Integer,TabItem>> iterator = this.items.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<Integer,TabItem> entry = iterator.next();
@@ -152,27 +165,32 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
         return item;
     }
 
-    public boolean contains(int index) {
+    @Override
+	public boolean contains(int index) {
         validateIndex(index);
         return this.items.containsKey(index);
     }
 
-    public TabItem get(int index) {
+    @Override
+	public TabItem get(int index) {
         validateIndex(index);
         return this.items.get(index);
     }
 
-    public void update() {
+    @Override
+	public void update() {
         update(this.items, this.items);
     }
 
-    public void update(int index) {
+    @Override
+	public void update(int index) {
         Map<Integer,TabItem> map = new HashMap<>();
         map.put(index, get(index));
         update(index, get(index), get(index));
     }
 
-    public int getNextIndex() {
+    @Override
+	public int getNextIndex() {
         for (int index = 0; index < getMaxItems(); index++) {
             if (!contains(index))
                 return index;
