@@ -13,6 +13,20 @@ public interface TabList {
 	 * @return the player
 	 */
     Player getPlayer();
+    
+    /**
+     * Sets the header and footer of the tablist.
+     * 
+     * @param header the header
+     * @param footer the footer
+     */
+    void setHeaderAndFooter(String header, String footer);
+    
+    /**
+     * Resets the header and footer to blank/empty.
+     * 
+     */
+    void resetHeaderAndFooter();
 
     /**
      * Enables the tab list, starts any necessary listeners/schedules.
