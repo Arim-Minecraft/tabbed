@@ -1,88 +1,103 @@
+This is a fork of the original tabbed to improve features and performance. There are some API changes from the original API.
+
 # Tabbed
 
-[![Build Status](https://travis-ci.org/thekeenant/tabbed.svg?branch=master)](https://travis-ci.org/thekeenant/tabbed)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/0d18390d22764a86bb77dc65208319d5)](https://www.codacy.com/app/thekeenant/tabbed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=thekeenant/tabbed&amp;utm_campaign=Badge_Grade)
-[![SpigotMC](https://img.shields.io/badge/SpigotMC-250%20downloads-yellow.svg)](https://www.spigotmc.org/resources/tabbed.18871/)
+## Introduction
 
 Tabbed is a Bukkit API for configuring the tablist for your users. Each slot is configurable: set the icon, ping, and text
 for each tab list item to your liking.
 
-**This library is not actively maintained, but if you are interested in contributing, go right ahead!**
+### Requirements
 
-**Dependencies:**
-* Any derivative of Bukkit 1.8 or 1.9
-* [ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/)
+Tabbed should work on any Spigot version from 1.8.8 to the latest. It may work on other versions, for which support is not guaranteed.
 
-**Demonstration:**
+**[ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/)** is required, 4.4.0 as of 30 March 2020 but newer ProtocolLib versions should work so long as they contain no breaking changes.
+
+**Java 8** (or higher) is required.
+
+### Demonstration
 
 ![http://i.imgur.com/hbO4Nbq.gif](http://i.imgur.com/hbO4Nbq.gif)
 
-## Maven/Gradle
+## Usage
 
-See: [Jitpack](https://jitpack.io/#thekeenant/tabbed/v1.8) for specifics.
+### Dependency and Repository
 
-```xml
-<repositories>
-  <repository>
-    <id>jitpack.io</id>
-    <url>https://jitpack.io</url>
-  </repository>
-</repositories>
+**Dependency:**
 
-<dependencies>
-  <dependency>
-    <groupId>com.github.thekeenant</groupId>
-    <artifactId>tabbed</artifactId>
-    <version>v1.8</version>
-  </dependency>
-</dependencies>
+```
+<dependency>
+	<groupId>space.arim.tabbed</groupId>
+	<artifactId>tabbed-core</artifactId>
+	<version>${INSERT_LATEST_VERSION}</version>
+</dependency>
 ```
 
+The latest version may be found in the *pom.xml* of this git repository.
 
-## Usage
-**Create Tabbed for your plugin:**
+**Repository:**
 
-Make an instance of Tabbed for your plugin (you cannot call this twice) in `onEnable()`.
+```xml
+<repository>
+	<id>arim-repo</id>
+	<url>https://jitpack.io</url>
+</repository>
+```
+
+### Upgrading from the original tabbed
+
+See CHANGES_v2.md for a full description of all additions and breaking changes from 1.x.
+
+## API
+
+**Creating a library instance**
+
+Get an instance of Tabbed via `Tabbed#get(JavaPlugin)`. If the instance for your plugin does not exist, it will be created. You do not need to worry about accidentally creating another instance.
 ```java
-Tabbed tabbed = new Tabbed(this);
+Tabbed tabbed = Tabbed.get(this); // e.g., if in plugin main class
 ```
 
 **Tab item examples:**
 ```java
-new TextTabItem("Custom text!");
-new BlankTabItem();
+new TextTabItem("Custom text!"); // basic text entry
+new BlankTabItem(); // empty entry 
 new PlayerTabItem(player);
 ```
 
 **More complex examples:**
 ```java
-// PlayeTabItem
-new PlayerTabItem(player, PlayerTabItem.LIST_NAME_PROVIDER);
-new PlayerTabItem(player, PlayerTabItem.LIST_NAME_PROVIDER, PlayerTabItem.SKIN_PROVIDER);
+// Uses the Bukkit API's recognised player tab list name.
+// This is what Bukkit does by default.
+new PlayerTabItem(player, Player::getPlayerListName);
+// No functional differences from previous, we're just explicitly specifying
+// how to fetch the player's skin. This is again what Bukkit does by default.
+new PlayerTabItem(player, Player::getPlayerListName, Skins::getPlayer);
 
-new PlayerTabItem(player, PlayerTabItem.DISPLAY_NAME_PROVIDER);
-new PlayerTabItem(player, PlayerTabItem.DISPLAY_NAME_PROVIDER, Skins.getDot(ChatColor.RED));
+// Uses the player's display name, according to Bukkit, as their tab list name
+// Note that a tab list name and a display name are completely different
+new PlayerTabItem(player, Player::getDisplayName);
+// Same as previous, but we are overriding the player's skin
+// to use a red dot for their skin
+new PlayerTabItem(player, Player::getDisplayName, DotSkins.getDot(ChatColor.RED));
 
-new PlayerTabItem(player, new PlayerProvider<String>() {
-    @Override
-    public String get(Player player) {
-        return player.getName().toUpperCase();
-    }
+// Uses a custom variable for the tab list name shown
+new PlayerTabItem(player, (player) -> {
+	return myPlugin.getSomeVar(player);
 });
 
 // TextTabItem
 new TextTabItem("Some text!", 1000); // ping = 1,000 in this case
-new TextTabItem("Some text!", 1000, Skins.DEFAULT_SKIN);
+new TextTabItem("Some text!", 1000, Skins.DEFAULT_SKIN); // explicitly using the default skin
 
-new TextTabItem("Red skin :D", 0, Skins.getDot(ChatColor.RED));
-new TextTabItem("Yellow skin :O", 0, Skins.getDot(ChatColor.YELLOW));
-new TextTabItem("An Enderman!", 0, Skins.getMob(EntityType.ENDERMAN));
+new TextTabItem("Red skin :D", 0, DotSkins.getDot(ChatColor.RED));
+new TextTabItem("Yellow skin :O", 0, DotSkins.getDot(ChatColor.YELLOW));
+new TextTabItem("An Enderman!", 0, MobSkins.getMob(EntityType.ENDERMAN));
 
 // BlankTabItem
-new BlankTabItem(Skins.getSkin(ChatColor.RED);
+new BlankTabItem(DotSkins.getDot(ChatColor.RED); // an empty entry using a red dot skin
 ```
 
-### Things to know!
+### Things to Know
 
 * Tab lists are associated per player. This means you must create a new tab list every time a user joins (`PlayerJoinEvent` works just fine).
 * You can get a player's tab list with `tabbed.getTabList(player)`
@@ -91,7 +106,6 @@ new BlankTabItem(Skins.getSkin(ChatColor.RED);
 immediately).
 
 Now you can start creating cool tablists!
-
 
 ### TitledTabList
 
@@ -124,8 +138,7 @@ String footer = tab.getFooter();
 
 ### TableTabList
 
-This tablist behaves like a table with a specified number of columns and rows. You can set specific items at a column and row. Cells
-that don't have anything set are automatically filled with BlankTabItem's.
+This tablist behaves like a table with a specified number of columns and rows. You can set specific items at a column and row. Cells that don't have anything set are automatically filled with BlankTabItem's.
 
 **Constructors:**
 ```java
@@ -183,10 +196,11 @@ This is just an example of how to implement your own custom tablist. It appears 
 DefaultTabList tab = tabbed.newDefaultTabList(player);
 ```
 
-## Batch updating
+### Batch updating
 
-Tabbed sends packets only when it is necessary: it runs checks to see if there are differences between what the client currently sees
-and what is being sent. Tabbed doesn't know, on the other hand, when you are sending a bunch of new tab items in a row. For example if you have a loop like:
+Tabbed sends packets only when it is necessary: it runs checks to see if there are differences between what the client currently sees and what is being sent.
+
+Tabbed doesn't know, on the other hand, when you are sending a bunch of new tab items in a row. For example if you have a loop like:
 ```java
 int i = 0;
 for (Player player : Bukkit.getOnlinePlayers()) {
@@ -195,6 +209,7 @@ for (Player player : Bukkit.getOnlinePlayers()) {
 }
 ```
 It will send up to `2 * Bukkit.getOnlinePlayers().length` packets to the player (update name + ping). This might cause some blinking for the client. It is smarter to batch send these packets and reduce it to a maximum of `4` packets sent like so:
+
 ```java
 tabbed.setBatchUpdate(true);
 int i = 0;
@@ -204,4 +219,4 @@ for (Player player : Bukkit.getOnlinePlayers()) {
 tabbed.batchUpdate(); // sends the packets!
 tabbed.setBatchUpdate(false); // optional
 ```
-No blinking any more (except skins, that's just Minecraft downloading/reading the skin when it isn't cached).
+I highly recommend using batch updating. It's simply much more efficient. We strive for perfection, even if we never get there.
