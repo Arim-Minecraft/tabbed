@@ -28,6 +28,40 @@
 		<plugin.url>${project.url}</plugin.url>
 	</properties>
 	
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 3</name>
+			<url>https://www.gnu.org/licenses/</url>
+			<distribution>repo</distribution>
+			<comments>Strong copyleft license, commonly known as the GNU GPL v3</comments>
+		</license>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<id>anandbeh</id>
+			<name>Anand Beh</name>
+			<url>https://www.arim.space</url>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<timezone>America/New_York</timezone>
+		</developer>
+		<developer>
+			<id>keenant</id>
+			<name>Keenan Thompson</name>
+			<roles>
+				<role>creator</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+	
 	<build>
 		<pluginManagement>
 			<plugins>
