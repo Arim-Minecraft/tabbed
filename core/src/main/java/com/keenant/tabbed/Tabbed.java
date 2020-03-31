@@ -196,13 +196,35 @@ public class Tabbed {
     public TableTabList newTableTabList(Player player, int columns, int minColumnWidth, int maxColumnWidth) {
         return put(player, new TableTabList(this, player, columns, minColumnWidth, maxColumnWidth));
     }
-
+    
+    /**
+     * Creates a TabList of arbitrary type and pairs it with the player. <br>
+     * This is provided for convenience, so that {@link #getTabList(Player)} and
+     * {@link #destroyTabList(Player)} may recognise custom tab list implementations.
+     * 
+     * @param <T> the type of the tab list
+     * @param player the player
+     * @param tabList the tab list constructed
+     * @return false if the player already had a tablist and it was the same tablist, true otherwise
+     */
+    public <T extends TabList> boolean newArbitraryTabList(Player player, T tabList) {
+    	TabList previous = this.tabLists.put(player.getUniqueId(), tabList);
+    	if (!tabList.equals(previous)) {
+    		if (previous != null) {
+    			previous.disable(); // disable the previous before enabling the current
+    		}
+    		tabList.enable();
+    		return true;
+    	}
+    	return false;
+    }
+    
     private <T extends TabList> T put(Player player, T tabList) {
-        TabList previous = this.tabLists.put(player.getUniqueId(), tabList);
-        if (previous != null) {
-        	previous.disable(); // disable the previous before enabling the current
-        }
-        tabList.enable();
+    	TabList previous = this.tabLists.put(player.getUniqueId(), tabList);
+    	if (previous != null) {
+			previous.disable(); // disable the previous before enabling the current
+		}
+		tabList.enable();
         return tabList;
     }
 }
