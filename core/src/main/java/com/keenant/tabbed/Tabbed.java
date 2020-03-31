@@ -23,13 +23,17 @@ public class Tabbed {
     private static Map<Plugin,Tabbed> instances = new HashMap<>();
     @Getter @Setter static Level logLevel = Level.WARNING;
 
-    @Getter private final Plugin plugin;
-    private final ConcurrentHashMap<UUID,TabList> tabLists;
+    /**
+     * The plugin associated with this library instance. <br>
+     * This is the same plugin passed to {@link Tabbed#get(JavaPlugin)}.
+     * 
+     */
+    @Getter
+    private final Plugin plugin;
+    private final ConcurrentHashMap<UUID,TabList> tabLists = new ConcurrentHashMap<>();
 
     private Tabbed(Plugin plugin) {
         this.plugin = plugin;
-        this.tabLists = new ConcurrentHashMap<>();
-        instances.put(plugin, this);
     }
 
     public static void log(Level level, String message) {
@@ -97,9 +101,7 @@ public class Tabbed {
      * @return
      */
     public TitledTabList newTitledTabList(Player player) {
-    	TitledTabList tabList = new TitledTabList(player);
-    	tabList.enable();
-        return put(player, tabList);
+        return put(player, new TitledTabList(player));
     }
 
     /**
@@ -108,9 +110,7 @@ public class Tabbed {
      * @return
      */
     public DefaultTabList newDefaultTabList(Player player) {
-    	DefaultTabList tabList = new DefaultTabList(this, player, -1);
-    	tabList.enable();
-        return put(player, tabList);
+        return put(player, new DefaultTabList(this, player, -1));
     }
 
     /**
@@ -152,9 +152,7 @@ public class Tabbed {
      * @return
      */
     public SimpleTabList newSimpleTabList(Player player, int maxItems, int minColumnWidth, int maxColumnWidth) {
-    	SimpleTabList tabList = new SimpleTabList(this, player, maxItems, minColumnWidth, maxColumnWidth);
-    	tabList.enable();
-        return put(player, tabList);
+        return put(player, new SimpleTabList(this, player, maxItems, minColumnWidth, maxColumnWidth));
     }
 
     /**
@@ -196,16 +194,15 @@ public class Tabbed {
      * @return
      */
     public TableTabList newTableTabList(Player player, int columns, int minColumnWidth, int maxColumnWidth) {
-    	TableTabList tabList = new TableTabList(this, player, columns, minColumnWidth, maxColumnWidth);
-    	tabList.enable();
-        return put(player, tabList);
+        return put(player, new TableTabList(this, player, columns, minColumnWidth, maxColumnWidth));
     }
 
     private <T extends TabList> T put(Player player, T tabList) {
         TabList previous = this.tabLists.put(player.getUniqueId(), tabList);
         if (previous != null) {
-        	previous.disable();
+        	previous.disable(); // disable the previous before enabling the current
         }
+        tabList.enable();
         return tabList;
     }
 }
