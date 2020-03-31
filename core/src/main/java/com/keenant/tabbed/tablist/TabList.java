@@ -19,14 +19,17 @@ public interface TabList {
      * 
      * @param header the header
      * @param footer the footer
+     * 
+     * @return true if the tablist changed as a result of the call, false otherwise
      */
-    void setHeaderAndFooter(String header, String footer);
+    boolean setHeaderAndFooter(String header, String footer);
     
     /**
      * Resets the header and footer to blank/empty.
      * 
+     * @return true if the tablist changed as a result of the call, false otherwise
      */
-    void resetHeaderAndFooter();
+    boolean resetHeaderAndFooter();
 
     /**
      * Enables the tab list, starts any necessary listeners/schedules.

@@ -2,8 +2,6 @@ package com.keenant.tabbed.tablist;
 
 import com.comphenix.protocol.PacketType.Play.Server;
 
-import com.google.common.base.Objects;
-
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -12,6 +10,7 @@ import lombok.ToString;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 
 /**
  * A very basic tab list. It doesn't modify the items, only the header/footer.
@@ -37,17 +36,19 @@ public class TitledTabList implements TabList {
     }
 
     @Override
-	public void setHeaderAndFooter(String header, String footer) {
-        if (!Objects.equal(this.header, header) || !Objects.equal(this.footer, footer)) {
+	public boolean setHeaderAndFooter(String header, String footer) {
+        if (!Objects.equals(this.header, header) || !Objects.equals(this.footer, footer)) {
         	this.header = header;
             this.footer = footer;
             updateHeaderFooter();
+            return true;
         }
+        return false;
     }
 
     @Override
-	public void resetHeaderAndFooter() {
-    	setHeaderAndFooter(null, null);
+	public boolean resetHeaderAndFooter() {
+    	return setHeaderAndFooter(null, null);
     }
 
     private void updateHeaderFooter() {
