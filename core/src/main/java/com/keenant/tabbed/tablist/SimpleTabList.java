@@ -31,7 +31,7 @@ import lombok.ToString;
  */
 @ToString(exclude = "tabbed")
 public class SimpleTabList extends TitledTabList implements CustomTabList {
-    public static int MAXIMUM_ITEMS = 4 * 20; // client maximum is 4x20 (4 columns, 20 rows)
+    public static final int MAXIMUM_ITEMS = 4 * 20; // client maximum is 4x20 (4 columns, 20 rows)
 
     protected final Tabbed tabbed;
     protected final Map<Integer,TabItem> items;
