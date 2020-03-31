@@ -18,9 +18,10 @@ class Packets {
 
     /**
      * Creates a PLAYER_INFO packet from the params.
-     * @param action
-     * @param data
-     * @return
+     * 
+     * @param action the action
+     * @param data the packet parameters
+     * @return a packet container for the PLAYER_INFO packet
      */
     static PacketContainer getPacket(PlayerInfoAction action, PlayerInfoData data) {
         return getPacket(action, Collections.singletonList(data));
@@ -28,9 +29,10 @@ class Packets {
 
     /**
      * Creates a PLAYER_INFO packet from the params.
-     * @param action
-     * @param data
-     * @return
+     * 
+     * @param action the action
+     * @param data the packet parameters
+     * @return a packet container for the PLAYER_INFO packet
      */
     static PacketContainer getPacket(PlayerInfoAction action, List<PlayerInfoData> data) {
         PacketContainer packet = ProtocolLibrary.getProtocolManager().createPacket(Server.PLAYER_INFO);
@@ -41,9 +43,9 @@ class Packets {
 
     /**
      * Sends a list of ProtocolLib packets to a player.
-     * @param player
-     * @param packets
-     * @return
+     * 
+     * @param player the target player
+     * @param packets the packets to send
      */
     static void send(Player player, List<PacketContainer> packets) {
         try {
