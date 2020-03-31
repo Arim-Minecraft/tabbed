@@ -1,6 +1,7 @@
 package com.keenant.tabbed.item;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.bukkit.entity.Player;
@@ -32,9 +33,6 @@ public class PlayerTabItem implements TabItem {
         this.text = textProvider.apply(player);
         this.ping = getNewPing();
         this.skin = skinProvider.apply(player);
-        updateText();
-        updatePing();
-        updateSkin();
     }
 
     public PlayerTabItem(Player player, PlayerProvider<String> textProvider) {
@@ -50,9 +48,9 @@ public class PlayerTabItem implements TabItem {
         if (!this.player.isOnline())
             return false;
 
-        String newText = this.textProvider.apply(this.player);
-        boolean update = this.text == null || !newText.equals(this.text);
-        this.text = newText;
+        String text = this.textProvider.apply(this.player);
+        boolean update = !Objects.equals(this.text, text);
+        this.text = text;
         return update;
     }
 
@@ -61,9 +59,9 @@ public class PlayerTabItem implements TabItem {
         if (!this.player.isOnline())
             return false;
 
-        int newPing = getNewPing();
-        boolean update = newPing != ping;
-        this.ping = newPing;
+        int ping = getNewPing();
+        boolean update = this.ping != ping;
+        this.ping = ping;
         return update;
     }
 
@@ -72,9 +70,9 @@ public class PlayerTabItem implements TabItem {
         if (!this.player.isOnline() || !this.player.isValid())
             return false;
 
-        Skin newSkin = this.skinProvider.apply(this.player);
-        boolean update = this.skin == null || !newSkin.equals(this.skin);
-        this.skin = newSkin;
+        Skin skin = this.skinProvider.apply(this.player);
+        boolean update = !Objects.equals(this.skin, skin);
+        this.skin = skin;
         return update;
     }
 
