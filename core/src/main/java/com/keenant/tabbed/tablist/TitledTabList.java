@@ -1,6 +1,9 @@
 package com.keenant.tabbed.tablist;
 
 import com.comphenix.protocol.PacketType.Play.Server;
+
+import com.google.common.base.Objects;
+
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -35,9 +38,11 @@ public class TitledTabList implements TabList {
 
     @Override
 	public void setHeaderAndFooter(String header, String footer) {
-    	this.header = header;
-        this.footer = footer;
-        updateHeaderFooter();
+        if (!Objects.equal(this.header, header) || !Objects.equal(this.footer, footer)) {
+        	this.header = header;
+            this.footer = footer;
+            updateHeaderFooter();
+        }
     }
 
     @Override
