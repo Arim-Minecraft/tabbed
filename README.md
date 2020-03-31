@@ -4,14 +4,14 @@ This is a fork of the original tabbed to improve features and performance. There
 
 ## Introduction
 
-Tabbed is a Bukkit API for configuring the tablist for your users. Each slot is configurable: set the icon, ping, and text
+Tabbed is an API for configuring the tablist for your users. Each slot is configurable: set the icon, ping, and text
 for each tab list item to your liking.
 
 ### Requirements
 
-Tabbed should work on any Spigot version from 1.8.8 to the latest. It may work on other versions, for which support is not guaranteed.
+**Spigot** or any derivatives (e.g. Paper) should work. Tabbed supports 1.8.8-1.15.2. It may work on other versions, for which support is not guaranteed.
 
-**[ProtocolLib](https://www.spigotmc.org/resources/protocollib.1997/)** is required, 4.4.0 as of 30 March 2020 but newer ProtocolLib versions should work so long as they contain no breaking changes.
+**ProtocolLib** is required, see [here](https://www.spigotmc.org/resources/protocollib.1997/) for download. Tabbed is built against 4.4.0 of ProtocolLib, but newer versions will probably work (so long as they have no breaking changes).
 
 **Java 8** (or higher) is required.
 
@@ -40,7 +40,7 @@ The latest version may be found in the *pom.xml* of this git repository.
 ```xml
 <repository>
 	<id>arim-repo</id>
-	<url>https://jitpack.io</url>
+	<url>https://dl.cloudsmith.io/public/anand-beh/arim-repo/maven/</url>
 </repository>
 ```
 
@@ -50,21 +50,111 @@ See CHANGES_v2.md for a full description of all additions and breaking changes f
 
 ## API
 
-**Creating a library instance**
+### Creating a library instance
 
 Get an instance of Tabbed via `Tabbed#get(JavaPlugin)`. If the instance for your plugin does not exist, it will be created. You do not need to worry about accidentally creating another instance.
 ```java
 Tabbed tabbed = Tabbed.get(this); // e.g., if in plugin main class
 ```
 
-**Tab item examples:**
+### Before You Start
+
+* Tab lists are associated per player.
+	* I recommend you create a tab list every time a user joins (`PlayerJoinEvent` works fine).
+	* If a player already has a tab list, and you create a new one, the old one is removed and discarded.
+	* You can get a player's tab list with `tabbed.getTabList(player)` (will return null if it does not exist).
+	* Tab lists must be removed when the player leaves. You must therefore listen to `PlayerQuitEvent` and remove a player's tab list with `tabbed.destroyTabList(player)` or `tabbed.destroyTabList(tab)`.
+
+* Tabbed does some things automatically, so you don't have to:
+	* Tab lists with dynamic elements are checked for changes and, if a change is found, updated periodically.
+	* Packets are only sent when required; tabbed won't bother to send a packet if it doesn't change the tab list display.
+
+### TabLists
+
+**TitledTabList**
+
+A basic implementation of TabList with support for changing headers and footers only.
+
+```java
+TitledTabList tablist = tabbed.newTitledTabList(player);
+
+tablist.setHeaderFooter("The tab list header!", "The tab list footer :O");
+
+tablist.resetHeaderFooter(); // reset
+
+// Getters - you probably won't need these, but they're here nonetheless
+String header = tablist.getHeader();
+String footer = tablist.getFooter();
+```
+
+**TableTabList**
+
+This tablist behaves like a table with a specified number of columns and rows. You can set specific items at a column and row. Cells that don't have anything set are automatically filled with BlankTabItem's.
+
+```java
+// Creation
+TableTabList tablist;
+tablist = tabbed.newTableTabList(player); // columns = 4
+tablist = tabbed.newTableTabList(player, columns); // min width = -1
+tablist = tabbed.newTableTabList(player, columns, minColumnWidth); // max width = -1
+tablist = tabbed.newTableTabList(player, columns, minColumnWidth, maxColumnWidth);
+
+tablist.set(col, row, item);
+tablist.set(0, 0, item); // top left
+tablist.set(new TableCell(0, 0), item); // same as previous, using TableCell wrapper for readability
+
+TabItem item = tablist.get(0, 0);
+TabItem item = tablist.get(new TableCell(0, 0)); // again using TableCell
+
+tab.remove(0, 0);
+tab.remove(new TableCell(0,0)); // still using TableCell
+
+// Fill a box
+List<TabItem> items = new ArrayList<TabItem>();
+items.add(new TextTabItem("This will be at 0,0"));
+items.add(new TextTabItem("This will be at 1,0"));
+items.add(new TextTabItem("This will be at 0,1"));
+items.add(new TextTabItem("This will be at 1,1"));
+tablist.fill(0, 0, 1, 1, items, TableCorner.TOP_LEFT, FillDirection.HORIZONTAL);
+```
+
+**SimpleTabList**
+
+This behaves similarly to how the normal tablist behaves. You can simply add or remove items and Minecraft handles the positioning.
+
+```java
+SimpleTabList tablist;
+tablist = tabbed.newSimpleTabList(player);
+tablist = tabbed.newSimpleTabList(player, maxItems); // limits item count (default is MC maximum, aka 80 or 4x20)
+tablist = tabbed.newSimpleTabList(player, maxItems, minColumnWidth); // add spaces to items until min width
+tablist = tabbed.newSimpleTabList(player, maxItems, minColumnWidth, maxColumnWidth); // remove characters until max width
+
+tablist.add(item);
+tablist.add(0, item); // inserts to first position and shifts over other elements
+tablist.set(0, item); // removes item at index 0, inserts this one
+tablist.get(4); // gets the item at index 4
+```
+
+**DefaultTabList**
+
+This is just an example of how to implement your own custom tablist. It appears identical to vanilla Minecraft. There's really no reason you should use this.
+
+```java
+DefaultTabList tab = tabbed.newDefaultTabList(player);
+```
+
+### Tab Items
+
+**Simple usage**
+
 ```java
 new TextTabItem("Custom text!"); // basic text entry
 new BlankTabItem(); // empty entry 
 new PlayerTabItem(player);
 ```
 
-**More complex examples:**
+**More complex usage**
+
 ```java
 // Uses the Bukkit API's recognised player tab list name.
 // This is what Bukkit does by default.
@@ -97,108 +187,9 @@ new TextTabItem("An Enderman!", 0, MobSkins.getMob(EntityType.ENDERMAN));
 new BlankTabItem(DotSkins.getDot(ChatColor.RED); // an empty entry using a red dot skin
 ```
 
-### Things to Know
-
-* Tab lists are associated per player. This means you must create a new tab list every time a user joins (`PlayerJoinEvent` works just fine).
-* You can get a player's tab list with `tabbed.getTabList(player)`
-* You can remove a player's custom tab list with `tabbed.destroyTabList(player)` or `tabbed.destroyTabList(tab)`
-* `update()` is called on tablists every second. This simply checks for updates to dynamic elements that exist in tab items (such as player pings). You can manually call it if you so desire (such as if you call `setPlayerListName()` and wish to update their tab item
-immediately).
-
-Now you can start creating cool tablists!
-
-### TitledTabList
-
-This tab list doesn't modify the behavior of the items in the tab list, it jus allows you to change the header and footer. **All
-tab lists `extend TitledTabList` which means you can access these methods no matter the tab list type.**
-
-**Constructor:**
-```java
-tabbed.newTitledTabList(player);
-```
-
-**Usage:**
-```java
-TitledTabList tab = tabbed.newTitledTabList(player);
-tab.setHeader("The tab list header!");
-tab.setFooter("The tab list footer :O");
-
-// Better to send this (one packet)
-tab.setHeaderFooter("The tab list header!", "The tab list footer :O");
-
-// Reset
-tab.resetHeader();
-tab.resetFooter();
-tab.resetHeaderFooter();
-
-// Getters
-String header = tab.getHeader();
-String footer = tab.getFooter();
-```
-
-### TableTabList
-
-This tablist behaves like a table with a specified number of columns and rows. You can set specific items at a column and row. Cells that don't have anything set are automatically filled with BlankTabItem's.
-
-**Constructors:**
-```java
-tabbed.newTableTabList(player); // columns = 4
-tabbed.newTableTabList(player, columns); // min width = -1
-tabbed.newTableTabList(player, columns, minColumnWidth); // max width = -1
-tabbed.newTableTabList(player, columns, minColumnWidth, maxColumnWidth);
-```
-
-**Usage:**
-```java
-TableTabList tab = tabbed.newTableTabList(player);
-tab.set(col, row, item);
-tab.set(0, 0, item); // top left
-tab.set(new TableCell(0, 0), item); // an alias of the previous
-
-TabItem item = tab.get(0, 0);
-TabItem item = tab.get(new TableCell(0, 0));
-
-tab.remove(0, 0);
-tab.remove(new TableCell(0,0)); // same thing
-
-// Fill a box
-List<TabItem> items = new ArrayList<TabItem>();
-items.add(new TextTabItem("This will be at 0,0"));
-items.add(new TextTabItem("This will be at 1,0"));
-items.add(new TextTabItem("This will be at 0,1"));
-items.add(new TextTabItem("This will be at 1,1"));
-tab.fill(0, 0, 1, 1, items, TableCorner.TOP_LEFT, FillDirection.HORIZONTAL);
-```
-
-### SimpleTabList
-This behaves similarly to how the normal tablist behaves. You can simply add or remove items and Minecraft handles the positioning.
-
-**Constructors:**
-```java
-tabbed.newSimpleTabList(player);
-tabbed.newSimpleTabList(player, maxItems); // limits item count (default is MC maximum, aka 80 or 4x20)
-tabbed.newSimpleTabList(player, maxItems, minColumnWidth); // add spaces to items until min width
-tabbed.newSimpleTabList(player, maxItems, minColumnWidth, maxColumnWidth); // remove characters until max width
-```
-
-**Usage:**
-```java
-SimpleTabList tab = tabbed.newSimpleTabList(player);
-tab.add(item);
-tab.add(0, item); // inserts to first position
-tab.set(0, item); // removes item at index 0, inserts this one
-tab.get(4); // gets the item at index 4
-```
-
-### DefaultTabList
-This is just an example of how to implement your own custom tablist. It appears identical to vanilla Minecraft. There's usually no reason you should use this, it's just a demonstration you can find [here](https://github.com/thekeenant/Tabbed/blob/master/src/main/java/com/keenant/tabbed/tablist/DefaultTabList.java).
-```java
-DefaultTabList tab = tabbed.newDefaultTabList(player);
-```
-
 ### Batch updating
 
-Tabbed sends packets only when it is necessary: it runs checks to see if there are differences between what the client currently sees and what is being sent.
+Tabbed sends packets only when it is necessary: it determines whether there are differences between what the client currently sees and what would be sent.
 
 Tabbed doesn't know, on the other hand, when you are sending a bunch of new tab items in a row. For example if you have a loop like:
 ```java
