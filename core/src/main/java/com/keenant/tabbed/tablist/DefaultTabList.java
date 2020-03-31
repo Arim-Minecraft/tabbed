@@ -59,6 +59,7 @@ public final class DefaultTabList extends SimpleTabList {
         super.disable();
         HandlerList.unregisterAll(listener);
         this.tabbed.getPlugin().getServer().getScheduler().cancelTask(this.taskId);
+        listener = null; // prevents memory leaks
     }
 
     void addPlayer(Player player) {
