@@ -21,7 +21,7 @@ import com.comphenix.protocol.wrappers.WrappedGameProfile;
 
 import com.keenant.tabbed.Tabbed;
 import com.keenant.tabbed.item.TabItem;
-import com.keenant.tabbed.util.Skin;
+import com.keenant.tabbed.skin.Skin;
 
 import lombok.Getter;
 import lombok.ToString;

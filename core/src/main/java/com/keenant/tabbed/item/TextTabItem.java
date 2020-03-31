@@ -1,11 +1,12 @@
 package com.keenant.tabbed.item;
 
-import com.keenant.tabbed.util.Skin;
-import com.keenant.tabbed.util.Skins;
+import java.util.Objects;
+
+import com.keenant.tabbed.skin.Skin;
+import com.keenant.tabbed.skin.Skins;
+
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.Objects;
 
 /**
  * A tab item with custom text, ping and skin.

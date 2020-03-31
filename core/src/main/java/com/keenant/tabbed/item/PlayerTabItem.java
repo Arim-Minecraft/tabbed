@@ -1,16 +1,17 @@
 package com.keenant.tabbed.item;
 
-import com.keenant.tabbed.util.Skin;
-import com.keenant.tabbed.util.Skins;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 import org.bukkit.entity.Player;
 
 import space.arim.api.platform.spigot.nms.NMS;
+
+import com.keenant.tabbed.skin.Skin;
+import com.keenant.tabbed.skin.Skins;
+
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * A tab item that represents a player.

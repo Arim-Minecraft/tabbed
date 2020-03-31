@@ -1,4 +1,4 @@
-package com.keenant.tabbed.util;
+package com.keenant.tabbed.skin;
 
 import java.util.List;
 

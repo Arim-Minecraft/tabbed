@@ -1,4 +1,4 @@
-package com.keenant.tabbed.util;
+package com.keenant.tabbed.skin;
 
 public class DecorSkins {
 

@@ -1,6 +1,6 @@
 package com.keenant.tabbed.item;
 
-import com.keenant.tabbed.util.Skin;
+import com.keenant.tabbed.skin.Skin;
 
 /**
  * Represents a custom tab item.

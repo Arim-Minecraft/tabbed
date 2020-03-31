@@ -1,4 +1,4 @@
-package com.keenant.tabbed.util;
+package com.keenant.tabbed.skin;
 
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.google.common.base.Preconditions;
