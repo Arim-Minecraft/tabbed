@@ -47,7 +47,7 @@ public class PlayerTabItem implements TabItem {
 
     @Override
     public boolean updateText() {
-        if (!this.player.isOnline() || !this.player.isValid())
+        if (!this.player.isOnline())
             return false;
 
         String newText = this.textProvider.apply(this.player);
@@ -58,7 +58,7 @@ public class PlayerTabItem implements TabItem {
 
     @Override
     public boolean updatePing() {
-        if (!this.player.isOnline() || !this.player.isValid())
+        if (!this.player.isOnline())
             return false;
 
         int newPing = getNewPing();
