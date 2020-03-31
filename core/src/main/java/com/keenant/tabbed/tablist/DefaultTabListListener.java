@@ -14,12 +14,12 @@ class DefaultTabListListener implements Listener {
 	}
 	
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    private void onPlayerJoin(PlayerJoinEvent event) {
         tabList.addPlayer(event.getPlayer());
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerQuitEvent event) {
+    private void onPlayerJoin(PlayerQuitEvent event) {
         tabList.remove(tabList.getTabItemIndex(event.getPlayer()));
     }
 	
