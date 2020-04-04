@@ -228,6 +228,7 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
             this.items.putAll(items);
             return;
         }
+    	if (!enable) return;
 
         Map<Integer,TabItem> newItems = putAll(items);
         Packets.send(this.player, getUpdate(oldItems, newItems));

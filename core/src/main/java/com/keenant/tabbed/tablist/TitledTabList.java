@@ -20,6 +20,8 @@ public class TitledTabList implements TabList {
     @Getter protected final Player player;
     @Getter private String header;
     @Getter private String footer;
+    
+    volatile boolean enable;
 
     public TitledTabList(Player player) {
         this.player = player;
@@ -27,12 +29,12 @@ public class TitledTabList implements TabList {
 
     @Override
     public void enable() {
-
+    	enable = true;
     }
 
     @Override
     public void disable() {
-        resetHeaderAndFooter();
+        enable = false;
     }
 
     @Override
@@ -52,13 +54,15 @@ public class TitledTabList implements TabList {
     }
 
     private void updateHeaderFooter() {
-        PacketContainer packet = new PacketContainer(Server.PLAYER_LIST_HEADER_FOOTER);
-        packet.getChatComponents().write(0, WrappedChatComponent.fromText(this.header == null ? "" : this.header));
-        packet.getChatComponents().write(1, WrappedChatComponent.fromText(this.footer == null ? "" : this.footer));
-        try {
-            ProtocolLibrary.getProtocolManager().sendServerPacket(this.player, packet);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
+    	if (enable) {
+            PacketContainer packet = new PacketContainer(Server.PLAYER_LIST_HEADER_FOOTER);
+            packet.getChatComponents().write(0, WrappedChatComponent.fromText(this.header == null ? "" : this.header));
+            packet.getChatComponents().write(1, WrappedChatComponent.fromText(this.footer == null ? "" : this.footer));
+            try {
+                ProtocolLibrary.getProtocolManager().sendServerPacket(this.player, packet);
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+    	}
     }
 }
