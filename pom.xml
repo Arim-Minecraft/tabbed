@@ -5,7 +5,11 @@
 
 	<groupId>com.keenant.tabbed</groupId>
 	<artifactId>parent</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<!-- Remember to update versions: 
+		1. Update property core.version
+		2. Update versions in all child modules
+	-->
+	<version>2.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
 	<name>Tabbed</name>
@@ -16,7 +20,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
     	<maven.compiler.target>1.8</maven.compiler.target>
-    	<core.version>1.8.0</core.version>
+    	<core.version>2.0.2</core.version>
     	<lombok.version>1.18.12</lombok.version>
     	<arimapi.version>0.7.2-SNAPSHOT</arimapi.version>
 		<protocollib.version>4.5.0</protocollib.version>
