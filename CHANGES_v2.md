@@ -8,11 +8,13 @@ Previously, if you created a tablist for a player (with e.g. `tabbed.newSimpleTa
 
 In tabbed 2.x, if you create a tablist for a player who already has a tablist, the previous tablist will be overidden and automatically cleaned up.
 
-**Concurrency improvements**
+**Limited concurrency**
 
-The library instance is thread safe, including static methods. Note, however, that individual tab list objects are not necessarily thread safe themselves.
+The library instance is thread safe, including static methods. Individual tab list objects are not necessarily thread safe themselves.
 
-For example, this allows dependents to use a "thread-per-player" model for creating tab lists. (A thread per player is likely overkill – it would make more sense to have a single thread manage all of your tab lists).
+Since `tabbed.destroyTabList(player)` accesses the player's tablist and destroys it, it is not thread safe, and should probably be run from the same thread which created the tablist.
+
+At most, this allows dependents to use a "thread-per-player" model for creating tab lists. (A thread per player is likely overkill – it would make more sense to have a single thread manage all of your tab lists).
 
 ### Breaking Changes
 
