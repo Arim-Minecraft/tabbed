@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.keenant.tabbed.Tabbed;
 import com.keenant.tabbed.item.PlayerTabItem;
@@ -19,7 +19,7 @@ import com.keenant.tabbed.item.TabItem;
 public final class DefaultTabList extends SimpleTabList {
     private final Map<UUID,String> names = new HashMap<>();
 
-    private int taskId;
+    private BukkitTask task;
     
     private DefaultTabListListener listener;
 
@@ -33,11 +33,11 @@ public final class DefaultTabList extends SimpleTabList {
         listener = new DefaultTabListListener(this);
         this.tabbed.getPlugin().getServer().getPluginManager().registerEvents(listener, this.tabbed.getPlugin());
 
-        Bukkit.getOnlinePlayers().forEach(this::addPlayer);
+       tabbed.getPlugin().getServer().getOnlinePlayers().forEach(this::addPlayer);
 
         // Because there is no PlayerListNameUpdateEvent in Bukkit
-        this.taskId = this.tabbed.getPlugin().getServer().getScheduler().scheduleSyncRepeatingTask(this.tabbed.getPlugin(), () -> {
-			for (Player target : Bukkit.getOnlinePlayers()) {
+       this.task = this.tabbed.getPlugin().getServer().getScheduler().runTaskTimer(this.tabbed.getPlugin(), () -> {
+        	for (Player target : this.tabbed.getPlugin().getServer().getOnlinePlayers()) {
 				if (!names.containsKey(target.getUniqueId()))
 					continue;
 
@@ -51,14 +51,14 @@ public final class DefaultTabList extends SimpleTabList {
 				update(index);
 				names.put(target.getUniqueId(), currName);
 			}
-        }, 0, 5);
+        }, 0L, 5L);
     }
 
     @Override
     public void disable() {
         super.disable();
         HandlerList.unregisterAll(listener);
-        this.tabbed.getPlugin().getServer().getScheduler().cancelTask(this.taskId);
+        this.task.cancel();
         listener = null; // prevents memory leaks
     }
 
