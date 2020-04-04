@@ -292,18 +292,19 @@ public class TableTabList extends SimpleTabList {
     @AllArgsConstructor
     @EqualsAndHashCode
     public static class TableCell {
-        private int column;
-        private int row;
+        private final int column;
+        private final int row;
 
+        /**
+         * Adds the specified columns and rows to this cell's existing position,
+         * creating a new TableCell and returning it as the result.
+         * 
+         * @param columns the columns
+         * @param rows the rows
+         * @return a TableCell whose position is shifted by the columns and rows specified
+         */
         public TableCell add(int columns, int rows) {
-            this.column += columns;
-            this.row += rows;
-            return this;
-        }
-
-        @Override
-		public TableCell clone() {
-            return new TableCell(this.column, this.row);
+            return new TableCell(column + columns, row + rows);
         }
 
         @Override
@@ -327,10 +328,10 @@ public class TableTabList extends SimpleTabList {
             Preconditions.checkArgument(topLeft.getRow() <= bottomRight.getRow(), "row1 must be less than or equal to row2");
 
             this.cells = new ArrayList<>(4);
-            this.cells.add(topLeft.clone());
-            this.cells.add(topLeft.clone().add(width, 0));
-            this.cells.add(bottomRight.clone());
-            this.cells.add(bottomRight.clone().add(-width, 0));
+            this.cells.add(topLeft);
+            this.cells.add(topLeft.add(width, 0));
+            this.cells.add(bottomRight);
+            this.cells.add(bottomRight.add(-width, 0));
         }
 
         /**
@@ -400,7 +401,7 @@ public class TableTabList extends SimpleTabList {
 
         @Override
 		public TableBox clone() {
-            return new TableBox(this.getTopLeft().clone(), this.getBottomRight().clone());
+            return new TableBox(this.getTopLeft(), this.getBottomRight());
         }
     }
 

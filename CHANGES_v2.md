@@ -22,6 +22,8 @@ For example, this allows dependents to use a "thread-per-player" model for creat
 
 **PlayerProvider<T>**, whose `T get(Player)` returns some relevant information for a player, has been changed so that it extends `Function<Player, T>`. The method is thus `T apply(Player)`. For dependents which utilised lambdas in 1.x, a simple recompile will allow 2.x compatibility in this respect.
 
+**TableCell** is now immutable. As such, TableCell#add will return a new TableCell object. TableCell#clone has been removed.
+
 **com.keenant.tabbed.util** has been changed to *com.keenant.tabbed.skin*.
 
 **Skins** still contains many fun/useful skins, skin getters, etc. However, many of these have been refactored to `MobSkins`, `DotSkins`, `BlockSkins`, and `DecorSkins`.
