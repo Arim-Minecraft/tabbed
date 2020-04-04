@@ -29,7 +29,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>
-			<artifactId>ProtocolLib-API</artifactId>
+			<artifactId>ProtocolLib</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.spigotmc</groupId>

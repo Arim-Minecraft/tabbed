@@ -19,7 +19,7 @@
     	<core.version>1.8.0</core.version>
     	<lombok.version>1.18.12</lombok.version>
     	<arimapi.version>0.7.2-SNAPSHOT</arimapi.version>
-		<protocollib.version>4.4.0</protocollib.version>
+		<protocollib.version>4.5.0</protocollib.version>
     	<spigot.version>1.8.8-R0.1-SNAPSHOT</spigot.version>
     	
     	<plugin.name>${project.name}</plugin.name>
@@ -119,7 +119,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.comphenix.protocol</groupId>
-				<artifactId>ProtocolLib-API</artifactId>
+				<artifactId>ProtocolLib</artifactId>
 				<version>${protocollib.version}</version>
 				<scope>provided</scope>
 			</dependency>
