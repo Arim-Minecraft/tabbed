@@ -301,9 +301,8 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
 
     private WrappedGameProfile getGameProfile(int index, TabItem item) {
         Skin skin = item.getSkin();
-        if (!PROFILE_INDEX_CACHE.containsKey(skin)) // Cached by skins, so if you change the skins a lot, it still works while being efficient.
-            PROFILE_INDEX_CACHE.put(skin, new HashMap<>());
-        Map<Integer, WrappedGameProfile> indexCache = PROFILE_INDEX_CACHE.get(skin);
+        // Cached by skins, so if you change the skins a lot, it still works while being efficient.
+        Map<Integer, WrappedGameProfile> indexCache = PROFILE_INDEX_CACHE.computeIfAbsent(skin, (s) -> new HashMap<>());
 
         if (!indexCache.containsKey(index)) { // Profile is not cached, generate and cache one.
             String name = String.format("%03d", index) + "|UpdateMC"; // Starts with 00 so they are sorted in alphabetical order and appear in the right order.
