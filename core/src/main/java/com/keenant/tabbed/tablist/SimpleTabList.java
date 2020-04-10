@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.entity.Player;
 
@@ -42,7 +43,7 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
     @Getter boolean batchEnabled;
     private final Map<Integer,TabItem> clientItems;
 
-    private static final Map<Skin, Map<Integer, WrappedGameProfile>> PROFILE_INDEX_CACHE = new HashMap<>();
+    private static final ConcurrentHashMap<Skin, Map<Integer, WrappedGameProfile>> PROFILE_INDEX_CACHE = new ConcurrentHashMap<>();
 
     public SimpleTabList(Tabbed tabbed, Player player, int maxItems, int minColumnWidth, int maxColumnWidth) {
         super(player);
@@ -303,17 +304,15 @@ public class SimpleTabList extends TitledTabList implements CustomTabList {
     private WrappedGameProfile getGameProfile(int index, TabItem item) {
         Skin skin = item.getSkin();
         // Cached by skins, so if you change the skins a lot, it still works while being efficient.
-        Map<Integer, WrappedGameProfile> indexCache = PROFILE_INDEX_CACHE.computeIfAbsent(skin, (s) -> new HashMap<>());
+        Map<Integer, WrappedGameProfile> indexCache = PROFILE_INDEX_CACHE.computeIfAbsent(skin, (s) -> new ConcurrentHashMap<>());
 
-        if (!indexCache.containsKey(index)) { // Profile is not cached, generate and cache one.
-            String name = String.format("%03d", index) + "|UpdateMC"; // Starts with 00 so they are sorted in alphabetical order and appear in the right order.
-            UUID uuid = UUID.nameUUIDFromBytes(name.getBytes());
+        return indexCache.computeIfAbsent(index, (i) -> { // Profile is not cached, generate and cache one.
+        	 String name = String.format("%03d", index) + "|UpdateMC"; // Starts with 00 so they are sorted in alphabetical order and appear in the right order.
+             UUID uuid = UUID.nameUUIDFromBytes(name.getBytes());
 
-            WrappedGameProfile profile = new WrappedGameProfile(uuid, name); // Create a profile to cache by skin and index.
-            profile.getProperties().put(Skin.TEXTURE_KEY, item.getSkin().getProperty());
-            indexCache.put(index, profile); // Cache the profile.
-        }
-
-        return indexCache.get(index);
+             WrappedGameProfile profile = new WrappedGameProfile(uuid, name); // Create a profile to cache by skin and index.
+             profile.getProperties().put(Skin.TEXTURE_KEY, item.getSkin().getProperty());
+             return profile;
+        });
     }
 }
